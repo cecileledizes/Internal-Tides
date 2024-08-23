@@ -9,7 +9,7 @@ include("functions/closures.jl")
 include("functions/grid_spacings.jl")
 include("functions/forcings.jl")
 
-@inline function it_create_simulation(stop_time, output_folder, simulation_parameters)
+@inline function it_create_simulation(stop_time::Number, output_folder, simulation_parameters::NamedTuple)
     
     sp = create_simulation_parameters(simulation_parameters)
     z_spacing = create_spacings(sp)
@@ -77,8 +77,8 @@ include("functions/forcings.jl")
     u′Pz = Field(Integral(u′P, dims = 3))
     v′Pz = Field(Integral(v′P, dims = 3))
     
-    filename_1 = "variable.jld2"
-    filename_2 = "variable_average.jld2"
+    filename_1 = "[FILENAME].jld2"
+    filename_2 = "[AVERAGES_FILENAME].jld2"
     save_fields_interval = 30minutes
     timeaverage_schedule = AveragedTimeInterval(T₂, window = T₂)
     
