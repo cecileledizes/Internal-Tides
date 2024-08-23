@@ -9,7 +9,7 @@ include("functions/closures.jl")
 include("functions/grid_spacings.jl")
 include("functions/forcings.jl")
 
-@inline function it_create_simulation(stop_time::Number, output_folder, simulation_parameters::NamedTuple)
+@inline function it_create_simulation(stop_time::Number, foldername, simulation_parameters::NamedTuple)
     
     sp = create_simulation_parameters(simulation_parameters)
     z_spacing = create_spacings(sp)
