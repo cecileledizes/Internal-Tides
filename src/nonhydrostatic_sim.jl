@@ -8,9 +8,12 @@ include("functions/parameters.jl")
 include("functions/closures.jl")
 include("functions/grid_spacings.jl")
 include("functions/forcings.jl")
+include("functions/topographies.jl")
 
 @inline function it_create_simulation(stop_time::Number, foldername, simulation_parameters::NamedTuple)
-    
+    """Create 3D simulation of internal tides with a Nonhydrostatic Model"""
+
+    # NamedTuples of functions
     sp = create_simulation_parameters(simulation_parameters)
     spacings = create_spacings(sp)
     topographies = create_topography_functions(sp) 
@@ -33,7 +36,6 @@ include("functions/forcings.jl")
     # Tidal forcing
     coriolis = FPlane(latitude = sp.latitude)
     T₂ = (2π / sp.ω₂)seconds
-    
     closures = create_closures(1e-3, 1e-3, grid, sp)
     forcings = create_forcings(coriolis.f, sp)
     
@@ -70,7 +72,8 @@ include("functions/forcings.jl")
     v′ = v - V 
 
     N² = ∂z(b)
-    
+
+    # For calculating energy flux
     pbar = FunctionField{Nothing, Nothing, Center}((z, p)->0.5 * p.N^2 * z^2, grid; parameters=(; N=sqrt(sp.Nᵢ²)))
     P = pHY - pbar
     u′P = Field(u′ * P)
@@ -83,7 +86,7 @@ include("functions/forcings.jl")
     save_fields_interval = 30minutes
     timeaverage_schedule = AveragedTimeInterval(T₂, window = T₂)
     
-    #Output writers
+    # Output writers
     simulation.output_writers[:fields] = JLD2OutputWriter(model, (; u′, u, v′, v, w, P); #u, u′, U, v, v′, V, w, b, P, N²
                      filename = "$foldername/$filename_1",
                      schedule = TimeInterval(save_fields_interval),
@@ -98,6 +101,6 @@ include("functions/forcings.jl")
 
     @info simulation
 
-    #Call simulation
+    # Call simulation
     simulation
 end
