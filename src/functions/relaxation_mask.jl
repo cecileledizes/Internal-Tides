@@ -1,10 +1,11 @@
-# masking function for relaxation function, used in "forcings", not "base_sim" 
+# used in "forcings", not "base_sim" 
 
 using Oceananigans
 using Oceananigans.Units
 
 @inline function create_masks(sp::NamedTuple)
-
+    "masks for relaxation function" 
+    
     # Gaussian mask
     bottom_mask = GaussianMask{:z}(center=(-(sp.H)meters + (sp.h₀)meters), width=(sp.h₀)meters)
 
