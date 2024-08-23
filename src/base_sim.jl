@@ -101,6 +101,6 @@ include("functions/forcings.jl")
 
     @info simulation
 
-    # Call simulation
+    # Function returns the simulation
     simulation
 end
