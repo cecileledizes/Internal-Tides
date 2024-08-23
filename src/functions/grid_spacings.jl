@@ -47,6 +47,7 @@ using Oceananigans.Units
     end
     
     "horizontal spacing, creates smaller spacing close to the seamount"
-    
-    spacing = (; z_faces_128 = z_faces_128, z_faces_256 = z_faces_256) 
+
+    # Return this
+    (; z_faces_128 = z_faces_128, z_faces_256 = z_faces_256) 
 end
