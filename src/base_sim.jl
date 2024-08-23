@@ -4,15 +4,18 @@ using JLD2
 using Oceananigans.ImmersedBoundaries
 using Oceananigans: Fields.FunctionField
 
+# Files containing supplementary functions
 include("functions/parameters.jl")
 include("functions/closures.jl")
 include("functions/grid_spacings.jl")
 include("functions/forcings.jl")
 
 @inline function it_create_simulation(stop_time::Number, foldername, simulation_parameters::NamedTuple) # (simulation stop time, output folder for results, simulation parameters) 
+    """Creates a HydrostaticFreeSurfaceModel simulation of an internal tide created by a tidal flow"""
     
+    # NamedTuples of functions, call specific ones with "[TUPLE_NAME].[FUNCTION_NAME]" format
     sp = create_simulation_parameters(simulation_parameters)
-    z_spacing = create_spacings(sp)
+    spacing = create_spacings(sp)
     
     # Grid
     underlying_grid = RectilinearGrid(GPU(); size = (sp.Nx, sp.Ny, sp.Nz),
@@ -29,20 +32,18 @@ include("functions/forcings.jl")
     grid = ImmersedBoundaryGrid(underlying_grid, GridFittedBottom(bottom))
     @info grid
     
-    # Tidal forcing
-    coriolis = FPlane(latitude = sp.latitude)
-    T₂ = (2π / sp.ω₂)seconds
-    
-    closures = create_closures(1e-3, 1e-3, grid, sp)
-    forcings = create_forcings(coriolis.f, sp)
-    
     # Model
+    coriolis = FPlane(f = sp.f)
+    T₂ = (2π / sp.ω₂)seconds
+    closures = create_closures(1e-3, 1e-3, grid, sp) # closure functions
+    forcings = create_forcings(coriolis.f, sp) # forcing functions
+
     model = HydrostaticFreeSurfaceModel(; grid, coriolis,
                                       buoyancy = BuoyancyTracer(),
                                       tracers = :b,
                                       momentum_advection = WENO(),
                                       tracer_advection = WENO(),
-                                      forcing = (; u = (forcings.u_forcing))
+                                      forcing = (; u = (forcings.u_forcing)) 
     )
     @info model
 
@@ -55,10 +56,10 @@ include("functions/forcings.jl")
     Δt = 2minutes # 2 minutes for Δx,y=3906.25, adjust linearly with Δx,y
     simulation = Simulation(model; Δt, stop_time=(stop_time)days)
     
-    wizard = TimeStepWizard(cfl=0.2, diffusive_cfl = 0.2, max_Δt = Δt, min_Δt = 10seconds)
+    wizard = TimeStepWizard(cfl=0.2, diffusive_cfl = 0.2, max_Δt = Δt, min_Δt = 10seconds) # To ensure simulation stability
     simulation.callbacks[:wizard] = Callback(wizard, IterationInterval(20))
     
-    # Output
+    # Simulation output
     b = model.tracers.b
     u, v, w = model.velocities
     pHY = model.pressure.pHY′
@@ -70,7 +71,8 @@ include("functions/forcings.jl")
     v′ = v - V 
 
     N² = ∂z(b)
-    
+
+    # To calculate energy flux 
     pbar = FunctionField{Nothing, Nothing, Center}((z, p)->0.5 * p.N^2 * z^2, grid; parameters=(; N=sqrt(sp.Nᵢ²)))
     P = pHY - pbar
     u′P = Field(u′ * P)
@@ -83,7 +85,7 @@ include("functions/forcings.jl")
     save_fields_interval = 30minutes
     timeaverage_schedule = AveragedTimeInterval(T₂, window = T₂)
     
-    #Output writers
+    # Output writers
     simulation.output_writers[:fields] = JLD2OutputWriter(model, (; u′, u, v′, v, w, P); #u, u′, U, v, v′, V, w, b, P, N²
                      filename = "$foldername/$filename_1",
                      schedule = TimeInterval(save_fields_interval),
@@ -98,6 +100,6 @@ include("functions/forcings.jl")
 
     @info simulation
 
-    #Call simulation
+    # Call simulation
     simulation
 end
