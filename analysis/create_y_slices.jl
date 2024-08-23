@@ -65,7 +65,7 @@ hm_v = heatmap!(ax_v, xv, zv, v′ₙ; colorrange = (-umax, umax), colormap = :b
 Colorbar(fig[3, 2], hm_v, label = "m s⁻¹")
 
 ax_w = Axis(fig[4, 1]; title = "w-velocity, y-slices", axis_kwargs...)
-hm_w = heatmap!(ax_w, yw, zw, wₙ; colorrange = (-wmax, wmax), colormap = :balance)
+hm_w = heatmap!(ax_w, xw, zw, wₙ; colorrange = (-wmax, wmax), colormap = :balance)
 Colorbar(fig[4, 2], hm_w, label = "m s⁻¹")
 
 fig
