@@ -17,7 +17,7 @@ include("relaxation_mask.jl")
     @inline tidal_forcing(x, y, z, t, p) = p.tidal_forcing_amplitude * cos(p.ω₂ * t)
     
     masks = create_masks(sp) # (; mask_1, mask_2, mask_3)
-    damping = Relaxation(; rate = sqrt(sp.Nᵢ²)/(2pi), target = 0, mask = masks.mask_3)
+    damping = Relaxation(; rate = sqrt(sp.Nᵢ²)/(2pi), target = 0, mask = masks.mask_3) # At the moment, this doesn't seem to work...
     forcing = Forcing(tidal_forcing, parameters=(; tidal_forcing_amplitude, sp.ω₂))
     
     forcings = (; u_forcing = forcing, damping = damping)
