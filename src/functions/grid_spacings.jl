@@ -20,7 +20,7 @@ using Oceananigans.Units
 
     # Generating function 
     function z_faces_128(k)
-        if k == Nz + 1
+        if k == sp.Nz + 1
             0 
         else
             -(sp.H)meters + sum(B_128[1:k-1])
@@ -39,7 +39,7 @@ using Oceananigans.Units
 
     # Generating function 
     function z_faces_256(k)
-        if k == Nz + 1
+        if k == sp.Nz + 1
             0 
         else
             -(sp.H)meters + sum(B_256[1:k-1])
@@ -48,6 +48,30 @@ using Oceananigans.Units
     
     "horizontal spacing, creates smaller spacing close to the seamount"
 
+    function xy_spacing(x)
+        -100*exp(-(x^2)/(2(20000))) + 3900
+    end
+
+    half = div(sp.Nx, 2)
+
+    xy_array = LinRange(0, half, half) # start, stop, num_elements
+
+    # xy-spacing array
+    B_x = [xy_spacing(x) for xy in xy_array]
+
+    # Generating function 
+    function xy_faces(k::Int)
+        if k == half
+            0 
+        elseif k < half
+            0 - sum(B[1:trunc(Int, half - (k))])
+        elseif half < k <= sp.Nx
+            sum(B[1:trunc(Int, k-half)])
+        else 
+            sum(B[1:trunc(Int, k-(half + 1))]) + B[end]
+        end
+    end
+
     # Return this
-    (; z_faces_128 = z_faces_128, z_faces_256 = z_faces_256) 
+    (; z_faces_128 = z_faces_128, z_faces_256 = z_faces_256, xy_faces = xy_faces) 
 end
