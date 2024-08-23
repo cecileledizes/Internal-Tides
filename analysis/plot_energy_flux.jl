@@ -36,3 +36,5 @@ xy = LinRange(0, Nx, trunc(Int, Nx/step)) # start stop num_elements
 arrows!(xy, xy, reduced_uPz, reduced_vPz, arrowsize = 5, lengthscale = 20)
 
 f
+
+save("[IMAGE_NAME].png", f) # If necessary
