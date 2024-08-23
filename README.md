@@ -1,7 +1,7 @@
 # 3D Simulation of Internal Tides using Oceananigans
 
 ## Technical details
-Tested with Julia v1.10.4, Oceananigans v0.91.2, JLD2 v0.4.48, CUDA v5.3.5, and CairoMakie v0.12.2. This code uses GPU, but can be adapted to CPU by changing `GPU()` to `CPU()` in the grid of the simulation, in which case the jobscripts are not necessary. 
+Tested with Julia v1.10.4, Oceananigans v0.91.2, JLD2 v0.4.48, CUDA v5.3.5, and CairoMakie v0.12.2. This code is for GPU, but can be adapted to CPU by changing `GPU()` to `CPU()` in the grid of the simulation, in which case the jobscripts are not necessary. 
 
 ```
  # Grid
@@ -15,7 +15,10 @@ underlying_grid = RectilinearGrid(GPU(); size = (sp.Nx, sp.Ny, sp.Nz), # Change 
 ```
 
 ## Description
-Using Oceananigans, creates a 3D simulation of internal tides with modifiable parameters. In the "src" folder, the `NAME_sim.jl` files contain functions which return the appropriate simulation. To run the simulations, run the `run_NAME_sim.jl` files using the corresponding `NAME.sh` scripts in the "jobscripts" folder. Unlike the other files, the jobscripts are written with shell script. There is a version of the simulation using the HydrostaticFreeSurfaceModel (called `base_sim.jl`), and a version using the Nonhydrostatic Model (`nonhydrostatic_sim.jl`). Barring some necessary modifications due to differences between the models, the two have the same code. Additionally, there is a nondimensional HydrostaticFreeSurfaceModel simulation which has a separate set of nondimensional parameters (`nondim_sim.jl`). 
+Using Oceananigans, creates 3D simulations of internal tides with modifiable parameters. 
+
+## Details
+In the "src" folder, the `NAME_sim.jl` files contain functions which return the appropriate simulation. To run the simulations, run the corresponding `NAME.sh` scripts in a terminal. Unlike the other files, the jobscripts are written with shell script. There is a version of the simulation using the HydrostaticFreeSurfaceModel (called `base_sim.jl`), and a version using the Nonhydrostatic Model (`nonhydrostatic_sim.jl`). Barring some necessary modifications due to differences between the models, the two have the same code. Additionally, there is a nondimensional HydrostaticFreeSurfaceModel simulation which has a separate set of nondimensional parameters (`nondim_sim.jl`). 
 
 In the "src" folder, the "functions" subfolder contains functions which produce relevant or potentially relevant forcings, closures, grid spacings, ocean bottom topographies, and simulation parameters to modify the simulations with. Each function returns a `NamedTuple`. Can add to or modify this `NamedTuple` to modify or define more forcings, closures, parameters, etc. As an example, the `forcings.jl` file contains the `create_forcings(f, sp::NamedTuple)` function which returns `forcings = (; u_forcing = forcing, damping = damping)` when called. 
 
