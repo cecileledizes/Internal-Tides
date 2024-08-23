@@ -5,6 +5,9 @@ using Printf
 using Oceananigans: Fields.FunctionField
 
 include("functions/nondim_parameters.jl")
+include("functions/closures.jl")
+include("functions/forcings.jl")
+include("functions/grid_spacings.jl")
 
 # This has a different set of parameters than base_sim and nonhydrostatic_sim
 @inline function create_nondim_simulation(stop_time::Number, output_folder, simulation_parameters::NamedTuple)
@@ -21,7 +24,7 @@ include("functions/nondim_parameters.jl")
     )
     
     h₀ = (sp.δ * sp.H)
-    width = (h₀ * exp(-1/2) / sp.E) * sqrt(((sp.B^2) - 1) / (1 - (sp.β^2)))
+    width = (h₀ * exp(-1/2) / sp.E) * sqrt(((sp.B^2) - 1) / (1 - (sp.β^2))) # calculated from the slope of the Gaussian, not viable for other topography
     @inline hill(x, y) = (h₀)meters * exp((-x^2 - y^2)/ (2(((width)meters)^2)))
     @inline bottom(x, y) = - (sp.H)meters + hill(x, y)
     
@@ -29,19 +32,18 @@ include("functions/nondim_parameters.jl")
     @info grid
     
     # Tidal forcing
-    T₂ = (sp.T₂)hours
-    ω₂ = 2π / T₂ # radians/sec
+    T₂ = 2π / sp.ω₂ # sec
     ϵ = 0.1 # excursion parameter
-    coriolis = FPlane(f = sp.β * ω₂)
+    coriolis = FPlane(f = sp.β * sp.ω₂)
     Nᵢ² = (sp.B * ω₂) ^ 2  # [s⁻²] initial buoyancy frequency / stratification
 
-    U_tidal = ϵ * ω₂ * width
+    U_tidal = ϵ * sp.ω₂ * width
 
-    tidal_forcing_amplitude = U_tidal * (ω₂^2 - coriolis.f^2) / ω₂
+    tidal_forcing_amplitude = U_tidal * (sp.ω₂^2 - coriolis.f^2) / sp.ω₂
 
     @inline tidal_forcing(x, y, z, t, p) = p.tidal_forcing_amplitude * cos(p.ω₂ * t)
 
-    u_forcing = Forcing(tidal_forcing, parameters=(; tidal_forcing_amplitude, ω₂))
+    u_forcing = Forcing(tidal_forcing, parameters=(; tidal_forcing_amplitude, sp.ω₂))
     
     # Model
     model = HydrostaticFreeSurfaceModel(; grid, coriolis,
