@@ -23,10 +23,9 @@ Nx = file["grid/underlying_grid/Nx"]
 Ny = file["grid/underlying_grid/Ny"]
 Nz = file["grid/underlying_grid/Nz"]
 
-const T₂ = 12.421hours
+ω₂ = 0.00014 # default value, change if value of ω₂ changes
+T₂ = 2π / ω₂
 coriolis_f = file["coriolis/f"]
-ω₂ = 2π / T₂
-const Nᵢ² = 1e-4
 
 #Plotting u′, v′, w (y-slices)
 umax = maximum(abs, u′_t[end][:, div(Ny, 2), :])
