@@ -11,4 +11,4 @@ export JULIA_SCRATCH_TRACK_ACCESS=0
 cd ~/[FOLDER]
 
 # file to run, (; foldername, stop_time(days), H(m), Nx, Ny, Nz, h₀(m), width(m), ω₂(rad/s), Nᵢ²(s^-2), latitude/f)
-julia src/run_nonhydrostatic_sim.jl ../[FOLDERNAME] 2 3000 512 512 256 900 15558 "0.00014" "4e-6" 0
+julia src/run_nonhydrostatic_sim.jl ../[FOLDERNAME] 4 3000 512 512 256 900 15558 "0.00014" "4e-6" 0
