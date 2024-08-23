@@ -3,7 +3,7 @@
 using Oceananigans
 using Oceananigans.Units
 
-@inline function create_topography_function(sp::NamedTuple)
+@inline function create_topography_functions(sp::NamedTuple)
     
     # Gaussian topography
     @inline hill(x, y) = (sp.h₀)meters * exp((-x^2 - y^2)/ (2(((sp.width)meters)^2)))
