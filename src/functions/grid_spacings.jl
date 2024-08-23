@@ -3,10 +3,9 @@
 using Oceananigans
 using Oceananigans.Units
 
-@inline function create_spacings(sp::NamedTuple)
-
+@inline function vertical_spacings_128(sp::NamedTuple)
     "Vertical spacing functions, creates smaller spacing at z = -H, roughly constant spacing near z = 0.
-    Adjust if domain height (H) or grid size (Nz) is changed"
+    Works for domain height (-1000m) and grid size (128)"
     
     # z_spacing function for 128 horizontal grid points, 1km extent
     function z_spacing_128(y)
@@ -26,6 +25,14 @@ using Oceananigans.Units
             -(sp.H)meters + sum(B_128[1:k-1])
         end
     end
+
+    # return this
+    z_faces_128
+end
+
+@inline function vertical_spacings_256(sp::NamedTuple)
+    "Vertical spacing functions, creates smaller spacing at z = -H, roughly constant spacing near z = 0.
+    Works for domain height (-3000m) and grid size (256)"
     
     # z_spacing function for 256 vertical grid points, 3km extent
     function z_spacing_256(y)
@@ -45,15 +52,25 @@ using Oceananigans.Units
             -(sp.H)meters + sum(B_256[1:k-1])
         end
     end
-    
-    "horizontal spacing, creates smaller spacing close to the seamount"
 
+    # return this
+    z_faces_256
+end
+
+@inline function horizontal_spacing(sp::NamedTuple)
+    "Horizontal spacing, creates smaller spacing closer to the seamount. I'm not totally sure if this works."
+
+    xy_a = 100 # can change these parameters to change the spacing function
+    xy_b = 3900 
+
+    Δx = 1e6/sp.Nx
+    grid_width = sp.width/Δx # width of the seamount in terms of number of grid points
+    
     function xy_spacing(x)
-        -100*exp(-(x^2)/(2(20000))) + 3900
+        (-xy_a)*exp(-(x^2)/(2(grid_width^2))) + xy_b
     end
 
     half = div(sp.Nx, 2)
-
     xy_array = LinRange(0, half, half) # start, stop, num_elements
 
     # xy-spacing array
@@ -73,5 +90,5 @@ using Oceananigans.Units
     end
 
     # Return this
-    (; z_faces_128 = z_faces_128, z_faces_256 = z_faces_256, xy_faces = xy_faces) 
+    xy_faces
 end
