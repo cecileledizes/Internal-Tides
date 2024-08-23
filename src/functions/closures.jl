@@ -24,6 +24,6 @@ using Oceananigans.Units
     # add more closures here if needed
     
     # return this
-    closures = (; biharmonic = (horizontal_biharmonic_closure, vertical_biharmonic_closure), 
+    (; biharmonic = (horizontal_biharmonic_closure, vertical_biharmonic_closure), 
                 scalar = (horizontal_scalar_closure, vertical_scalar_closure))
 end
