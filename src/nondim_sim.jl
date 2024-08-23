@@ -4,7 +4,7 @@ using JLD2
 using Printf
 using Oceananigans: Fields.FunctionField
 
-include("nondim_parameters.jl")
+include("functions/nondim_parameters.jl")
 
 # This has a different set of parameters than base_sim and nonhydrostatic_sim
 @inline function create_nondim_simulation(stop_time::Number, output_folder, simulation_parameters::NamedTuple)
