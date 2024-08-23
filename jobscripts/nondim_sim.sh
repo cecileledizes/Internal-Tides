@@ -10,5 +10,5 @@ export JULIA_SCRATCH_TRACK_ACCESS=0
 
 cd ~/[FOLDER]
 
-# file to run, (; foldername, stop_time(days), H(m), Nx, Ny, Nz, h₀(m), width(m), ω₂(rad/s), Nᵢ²(s^-2), latitude/f)
-julia src/run_nondim_sim.jl ../[FOLDERNAME] 4 3000 512 512 256 900 15558 "0.00014" "4e-6" 0
+# COMMENT: file to run, (; foldername, stop_time, δ=0.3, E=0.5, β=0.5, B=14, H=3000, Nx=512, Ny=512, Nz=256, ω₂=0.00014)
+julia src/run_nondim_sim.jl ../[FOLDERNAME] 4 "0.3" "0.5" "0.5" 14 3000 512 512 256 "0.00014"
