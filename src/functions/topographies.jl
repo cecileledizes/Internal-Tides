@@ -7,8 +7,8 @@ using Oceananigans.Units
     
     # Gaussian topography
     @inline hill(x, y) = (sp.h₀)meters * exp((-x^2 - y^2)/ (2(((sp.width)meters)^2)))
-    @inline bottom(x, y) = - (sp.H)meters + hill(x, y)
+    @inline gaussian_bottom(x, y) = - (sp.H)meters + hill(x, y)
 
     # Return this
-    (; gaussian = bottom(x, y))
+    (; gaussian = gaussian_bottom)
 end
