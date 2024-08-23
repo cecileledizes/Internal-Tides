@@ -16,12 +16,13 @@ include("functions/forcings.jl")
     # NamedTuples of functions, call specific ones with "[TUPLE_NAME].[FUNCTION_NAME]" format
     sp = create_simulation_parameters(simulation_parameters)
     spacing = create_spacings(sp)
+    topographies = create_topography_functions(sp) 
     
     # Grid
     underlying_grid = RectilinearGrid(GPU(); size = (sp.Nx, sp.Ny, sp.Nz),
                                   x = ((-1000)kilometers, (1000)kilometers),
                                   y = ((-1000)kilometers, (1000)kilometers),
-                                  z = z_spacing.z_faces_256,
+                                  z = spacing.z_faces_256,
                                   halo = (4, 4, 4),
                                   topology = (Periodic, Periodic, Bounded)
     )
@@ -29,7 +30,7 @@ include("functions/forcings.jl")
     @inline hill(x, y) = (sp.h₀)meters * exp((-x^2 - y^2)/ (2(((sp.width)meters)^2)))
     @inline bottom(x, y) = - (sp.H)meters + hill(x, y)
     
-    grid = ImmersedBoundaryGrid(underlying_grid, GridFittedBottom(bottom))
+    grid = ImmersedBoundaryGrid(underlying_grid, GridFittedBottom(topographies.gaussian))
     @info grid
     
     # Model
