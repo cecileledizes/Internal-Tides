@@ -24,7 +24,8 @@ include("functions/grid_spacings.jl")
     )
     
     h₀ = (sp.δ * sp.H)
-    width = (h₀ * exp(-1/2) / sp.E) * sqrt(((sp.B^2) - 1) / (1 - (sp.β^2))) # calculated from the slope of the Gaussian, not viable for other topography
+    width = sp.L
+    # (h₀ * exp(-1/2) / sp.E) * sqrt(((sp.B^2) - 1) / (1 - (sp.β^2))) width calculated from the slope of the Gaussian
     @inline hill(x, y) = (h₀)meters * exp((-x^2 - y^2)/ (2(((width)meters)^2)))
     @inline bottom(x, y) = - (sp.H)meters + hill(x, y)
     
@@ -51,7 +52,8 @@ include("functions/grid_spacings.jl")
                                       tracers = :b,
                                       momentum_advection = WENO(),
                                       tracer_advection = WENO(),
-                                      forcing = (; u = u_forcing))
+                                      forcing = (; u = u_forcing)
+    )
     @info model
     
     @inline uᵢ(x, y, z) = 0
