@@ -4,6 +4,7 @@ using Oceananigans
 using Oceananigans.Units
 
 include("relaxation_mask.jl")
+include("topographies.jl") # Needed for bottom function if mask_2 is used for the Relaxation
 
 @inline function create_forcings(f, sp::NamedTuple) # f is the coriolis frequency
     ω₂ = sp.ω₂ # radians/sec
@@ -17,8 +18,8 @@ include("relaxation_mask.jl")
     forcing = Forcing(tidal_forcing, parameters=(; tidal_forcing_amplitude, sp.ω₂))
 
     # Damping function (this doesn't seem to work...)
-    masks = create_masks(sp) # (; mask_1, mask_2, mask_3)
-    damping = Relaxation(; rate = sqrt(sp.Nᵢ²)/(2pi), target = 0, mask = masks.mask_3)
+    mask = create_gaussian_mask(sp)
+    damping = Relaxation(; rate = sqrt(sp.Nᵢ²)/(2pi), target = 0, mask = mask)
 
     # Return this
     (; u_forcing = forcing, damping = damping)
