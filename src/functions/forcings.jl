@@ -6,13 +6,13 @@ using Oceananigans.Units
 include("relaxation_mask.jl")
 include("topographies.jl") # Needed for bottom function if mask_2 is used for the Relaxation
 
-@inline function create_tidal_forcing(f, sp::NamedTuple) # f is the coriolis frequency
+@inline function create_tidal_forcing(sp::NamedTuple) # f is the coriolis frequency
     ω₂ = sp.ω₂ # radians/sec
     ϵ = 0.1 # excursion parameter
 
     # Tidal forcing function
     U_tidal = ϵ * sp.ω₂ * (sp.width)meters
-    tidal_forcing_amplitude = U_tidal * (sp.ω₂^2 - f^2) / sp.ω₂
+    tidal_forcing_amplitude = U_tidal * (sp.ω₂^2 - sp.f^2) / sp.ω₂
     @inline tidal_forcing(x, y, z, t, p) = p.tidal_forcing_amplitude * cos(p.ω₂ * t)
     
     # return this
