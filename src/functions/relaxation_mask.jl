@@ -6,7 +6,7 @@ using Oceananigans.Units
 
 @inline function create_gaussian_mask(sp::NamedTuple)
     "Gaussian mask for relaxation function" 
-    # return this
+    # return
     bottom_mask = GaussianMask{:z}(center=(-(sp.H)meters + (sp.h₀)meters), width=(sp.h₀)meters)
 end
 
@@ -19,10 +19,15 @@ end
             0
         end
     end
+
+    # return 
     bottom_mask_2
 end
 
 @inline function create_exponential_mask(sp::NamedTuple)
     "Exponential mask" 
     bottom_mask_3(x, y, z) = exp(-(z - (-(sp.H)meters + (sp.h₀)meters)) / (2 * (sp.h₀)meters))
+
+    # return
+    bottom_mask_3
 end
