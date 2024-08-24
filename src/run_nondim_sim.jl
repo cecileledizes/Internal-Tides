@@ -4,9 +4,9 @@ using Oceananigans
 
 include("create_nondim_simulation.jl")
 
-# (; stop_time, δ=0.3, E=0.5, β=0.5, B=14, H=3000, Nx=512, Ny=512, Nz=256, ω₂=0.00014, L=15558)
+# (; stop_time, δ=0.3, E=0.5, β=0.5, B=14, H=3000, Nx=512, Ny=512, Nz=256, ω₂=0.00014, width=15558)
 # (; stop time, height ratio, relative steepness, frequency (f), frequency (N), domain height, x grid size, y grid size, z grid size, tidal frequency, width)
-
+# (; no units, no units, no units, rad/sec, rad/sec, m, no units, no units, no units, rad/sec, m)
 foldername = ARGS[1]
 
 stop_time = Meta.parse(ARGS[2])
@@ -19,9 +19,9 @@ Nx = Meta.parse(ARGS[8])
 Ny = Meta.parse(ARGS[9])
 Nz = Meta.parse(ARGS[10])
 ω₂ = Meta.parse(ARGS[11])
-L = Meta.parse(ARGS[12])
+width = Meta.parse(ARGS[12])
 
-simulation_parameters = (; δ, E, β, B, H, Nx, Ny, Nz, ω₂, L)
+simulation_parameters = (; δ, E, β, B, H, Nx, Ny, Nz, ω₂, width)
 
 simulation = it_create_nondim_simulation(stop_time, foldername, simulation_parameters)
 run!(simulation)
