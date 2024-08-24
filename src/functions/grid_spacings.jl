@@ -85,7 +85,7 @@ end
         elseif half < k <= sp.Nx
             sum(B[1:trunc(Int, k-half)])
         else 
-            sum(B[1:trunc(Int, k-(half + 1))]) + B[end]
+            sum(B[1:trunc(Int, k-(half + 1))]) + B[end] # need this because k goes up to Nx + 1
         end
     end
 
