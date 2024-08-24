@@ -1,5 +1,7 @@
-# closure functions
-# returns NamedTuple of closures
+# closure functions to be used in the model
+# returns NamedTuple of closures, call specific closures like this: 
+# closures = create_closures(A, B, C, D)
+# closures.biharmonic
 
 using Oceananigans
 using Oceananigans.Units
