@@ -4,7 +4,7 @@ using Oceananigans
 
 include("base_sim.jl")
 
-# (; stop_time, H, Nx, Ny, Nz, h₀, width, ω₂, Nᵢ², latitude)
+# (; stop_time, H, Nx, Ny, Nz, h₀, width, ω₂, Nᵢ², f)
 # Matches the arguments in the jobscript with relevant function arguments and simulation parameters
 foldername = ARGS[1]
 stop_time = Meta.parse(ARGS[2])
@@ -17,9 +17,9 @@ h₀ = Meta.parse(ARGS[7])
 width = Meta.parse(ARGS[8])
 ω₂ = Meta.parse(ARGS[9])
 Nᵢ² = Meta.parse(ARGS[10])
-latitude = Meta.parse(ARGS[11])
+f = Meta.parse(ARGS[11])
 
-simulation_parameters = (; H, Nx, Ny, Nz, h₀, width, ω₂, Nᵢ², latitude)
+simulation_parameters = (; H, Nx, Ny, Nz, h₀, width, ω₂, Nᵢ², f)
 
 simulation = it_create_simulation(stop_time, foldername, simulation_parameters)
 run!(simulation)
