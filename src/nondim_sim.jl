@@ -39,11 +39,8 @@ include("functions/grid_spacings.jl")
     Nᵢ² = (sp.B * ω₂) ^ 2  # [s⁻²] initial buoyancy frequency / stratification
 
     U_tidal = ϵ * sp.ω₂ * width
-
     tidal_forcing_amplitude = U_tidal * (sp.ω₂^2 - coriolis.f^2) / sp.ω₂
-
     @inline tidal_forcing(x, y, z, t, p) = p.tidal_forcing_amplitude * cos(p.ω₂ * t)
-
     u_forcing = Forcing(tidal_forcing, parameters=(; tidal_forcing_amplitude, sp.ω₂))
     
     # Model
