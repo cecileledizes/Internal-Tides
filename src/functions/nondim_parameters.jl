@@ -1,4 +1,4 @@
-default_inputs = (; δ=0.3, E=0.5, β=0.5, B=14, H=3000, Nx=512, Ny=512, Nz=256, ω₂=0.00014, L=15558)
+default_inputs = (; δ=0.3, E=0.5, β=0.5, B=14, H=3000, Nx=512, Ny=512, Nz=256, ω₂=0.00014, width=15558)
 # (; height ratio, relative steepness, frequency ratio (f/ω₂), frequency ratio (N/ω₂), 
 #  domain height, x grid size, y grid size, z grid size, tidal frequency, width)
 
