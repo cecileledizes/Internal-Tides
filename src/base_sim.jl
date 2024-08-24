@@ -9,6 +9,7 @@ include("functions/parameters.jl")
 include("functions/closures.jl")
 include("functions/grid_spacings.jl")
 include("functions/forcings.jl")
+include("functions/topographies.jl")
 
 @inline function it_create_simulation(stop_time::Number, foldername, simulation_parameters::NamedTuple) # (simulation stop time, output folder for results, simulation parameters) 
     """Creates a HydrostaticFreeSurfaceModel simulation of an internal tide created by a tidal flow"""
