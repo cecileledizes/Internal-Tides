@@ -28,9 +28,11 @@ T₂ = 2π / ω₂
 coriolis_f = file["coriolis/f"]
 
 #Plotting u′, v′, w (x-slices)
-umax = maximum(abs, u′_t[end][div(Nx, 2), :, :])
-vmax = maximum(abs, v′_t[end][div(Nx, 2), :, :])
-wmax = maximum(abs, w_t[end][div(Nx, 2), :, :])
+slice = div(Nx, 2) # slice location, change for a slice at a different value of x 
+
+umax = maximum(abs, u′_t[end][slice, :, :])
+vmax = maximum(abs, v′_t[end][slice, :, :])
+wmax = maximum(abs, w_t[end][slice, :, :])
 
 times = u′_t.times
 
@@ -43,9 +45,9 @@ n = Observable(1)
 title = @lift @sprintf("t = %1.2f days = %1.2f T₂",
                        round(times[$n] / day, digits=2) , round(times[$n] / T₂, digits=2))
 
-u′ₙ = @lift interior(u′_t[$n], div(Nx, 2), :, :)
-v′ₙ = @lift interior(v′_t[$n], div(Nx, 2), :, :)
-wₙ = @lift interior(w_t[$n], div(Nx, 2), :, :)
+u′ₙ = @lift interior(u′_t[$n], slice, :, :)
+v′ₙ = @lift interior(v′_t[$n], slice, :, :)
+wₙ = @lift interior(w_t[$n], slice, :, :)
 
 axis_kwargs = (xlabel = "y [km]",
                ylabel = "z [km]",
