@@ -1,4 +1,4 @@
-# variable x, y, z spacing
+# variable x, y, z spacing: vertical_spacings_128, vertical_spacings_256, horizontal_spacing
 
 using Oceananigans
 using Oceananigans.Units
