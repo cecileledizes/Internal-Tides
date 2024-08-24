@@ -1,7 +1,6 @@
 using Oceananigans
 using Oceananigans.Units
 using JLD2
-using Oceananigans.ImmersedBoundaries
 using Oceananigans: Fields.FunctionField
 
 # Files containing supplementary functions
@@ -14,7 +13,6 @@ include("functions/topographies.jl")
 @inline function it_create_simulation(stop_time::Number, foldername, simulation_parameters::NamedTuple) # (simulation stop time, output folder for results, simulation parameters) 
     """Creates a HydrostaticFreeSurfaceModel simulation of an internal tide created by a tidal flow"""
     
-    # NamedTuples of functions, call specific ones with "[TUPLE_NAME].[FUNCTION_NAME]" format
     sp = create_simulation_parameters(simulation_parameters)
     z_spacing = vertical_spacings_256(sp)
     bottom = create_gaussian_topography(sp) 
