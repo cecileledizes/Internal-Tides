@@ -1,50 +1,45 @@
 using Oceananigans
 using Oceananigans.Units
 using JLD2
-using Oceananigans.ImmersedBoundaries
 using Oceananigans: Fields.FunctionField
 
+# Files containing supplementary functions
 include("functions/parameters.jl")
 include("functions/closures.jl")
 include("functions/grid_spacings.jl")
 include("functions/forcings.jl")
 include("functions/topographies.jl")
 
-@inline function it_create_simulation(stop_time::Number, foldername, simulation_parameters::NamedTuple)
-    """Create 3D simulation of internal tides with a Nonhydrostatic Model"""
-
-    # NamedTuples of functions
+@inline function it_create_simulation(stop_time::Number, foldername, simulation_parameters::NamedTuple) # (simulation stop time, output folder for results, simulation parameters) 
+    """Creates a NonhydrostaticModel simulation of an internal tide created by a tidal flow"""
+    
     sp = create_simulation_parameters(simulation_parameters)
-    spacings = create_spacings(sp)
-    topographies = create_topography_functions(sp) 
+    z_spacing = vertical_spacings_256(sp)
+    bottom = create_gaussian_topography(sp) 
     
     # Grid
     underlying_grid = RectilinearGrid(GPU(); size = (sp.Nx, sp.Ny, sp.Nz),
-                                  x = ((-1000)kilometers, (1000)kilometers),
-                                  y = ((-1000)kilometers, (1000)kilometers),
-                                  z = spacings.z_faces_256,
-                                  halo = (4, 4, 4),
-                                  topology = (Periodic, Periodic, Bounded)
+                                      x = ((-1000)kilometers, (1000)kilometers),
+                                      y = ((-1000)kilometers, (1000)kilometers),
+                                      z = z_spacing,
+                                      halo = (4, 4, 4),
+                                      topology = (Periodic, Periodic, Bounded)
     )
     
-    @inline hill(x, y) = (sp.h₀)meters * exp((-x^2 - y^2)/ (2(((sp.width)meters)^2)))
-    @inline bottom(x, y) = - (sp.H)meters + hill(x, y)
-    
-    grid = ImmersedBoundaryGrid(underlying_grid, GridFittedBottom(topographies.gaussian))
+    grid = ImmersedBoundaryGrid(underlying_grid, GridFittedBottom(bottom))
     @info grid
     
-    # Tidal forcing
-    coriolis = FPlane(latitude = sp.latitude)
-    T₂ = (2π / sp.ω₂)seconds
-    closures = create_closures(1e-3, 1e-3, grid, sp)
-    forcings = create_forcings(coriolis.f, sp)
-    
     # Model
+    coriolis = FPlane(f = sp.f)
+    T₂ = (2π / sp.ω₂)seconds
+    closures = create_closures(1e-3, 1e-3, grid, sp) # closure functions
+    u_forcing = create_tidal_forcing(sp) # forcing functions
+
     model = NonhydrostaticModel(; grid, coriolis,
-                                      buoyancy = BuoyancyTracer(),
-                                      tracers = :b,
-                                      advection = WENO(),
-                                      forcing = (; u = (forcings.u_forcing))
+                                buoyancy = BuoyancyTracer(),
+                                tracers = :b,
+                                advection = WENO(),
+                                forcing = (; u = (u_forcing)) 
     )
     @info model
 
@@ -57,10 +52,10 @@ include("functions/topographies.jl")
     Δt = 2minutes # 2 minutes for Δx,y=3906.25, adjust linearly with Δx,y
     simulation = Simulation(model; Δt, stop_time=(stop_time)days)
     
-    wizard = TimeStepWizard(cfl=0.2, diffusive_cfl = 0.2, max_Δt = Δt, min_Δt = 10seconds)
+    wizard = TimeStepWizard(cfl=0.2, diffusive_cfl = 0.2, max_Δt = Δt, min_Δt = 10seconds) # To ensure simulation stability
     simulation.callbacks[:wizard] = Callback(wizard, IterationInterval(20))
     
-    # Output
+    # Simulation output
     b = model.tracers.b
     u, v, w = model.velocities
     pHY = model.pressures.pHY′
@@ -73,7 +68,7 @@ include("functions/topographies.jl")
 
     N² = ∂z(b)
 
-    # For calculating energy flux
+    # To calculate energy flux 
     pbar = FunctionField{Nothing, Nothing, Center}((z, p)->0.5 * p.N^2 * z^2, grid; parameters=(; N=sqrt(sp.Nᵢ²)))
     P = pHY - pbar
     u′P = Field(u′ * P)
