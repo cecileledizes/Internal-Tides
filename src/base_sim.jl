@@ -15,7 +15,7 @@ include("functions/forcings.jl")
     
     # NamedTuples of functions, call specific ones with "[TUPLE_NAME].[FUNCTION_NAME]" format
     sp = create_simulation_parameters(simulation_parameters)
-    z_spacing = z_spacings_256(sp)
+    z_spacing = vertical_spacings_256(sp)
     bottom = create_gaussian_topography(sp) 
     
     # Grid
