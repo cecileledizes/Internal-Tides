@@ -15,36 +15,33 @@ include("functions/forcings.jl")
     
     # NamedTuples of functions, call specific ones with "[TUPLE_NAME].[FUNCTION_NAME]" format
     sp = create_simulation_parameters(simulation_parameters)
-    spacing = create_spacings(sp)
-    topographies = create_topography_functions(sp) 
+    z_spacing = z_spacings_256(sp)
+    bottom = create_gaussian_topography(sp) 
     
     # Grid
     underlying_grid = RectilinearGrid(GPU(); size = (sp.Nx, sp.Ny, sp.Nz),
                                   x = ((-1000)kilometers, (1000)kilometers),
                                   y = ((-1000)kilometers, (1000)kilometers),
-                                  z = spacing.z_faces_256,
+                                  z = z_spacing,
                                   halo = (4, 4, 4),
                                   topology = (Periodic, Periodic, Bounded)
     )
     
-    @inline hill(x, y) = (sp.h₀)meters * exp((-x^2 - y^2)/ (2(((sp.width)meters)^2)))
-    @inline bottom(x, y) = - (sp.H)meters + hill(x, y)
-    
-    grid = ImmersedBoundaryGrid(underlying_grid, GridFittedBottom(topographies.gaussian))
+    grid = ImmersedBoundaryGrid(underlying_grid, GridFittedBottom(bottom))
     @info grid
     
     # Model
     coriolis = FPlane(f = sp.f)
     T₂ = (2π / sp.ω₂)seconds
     closures = create_closures(1e-3, 1e-3, grid, sp) # closure functions
-    forcings = create_forcings(coriolis.f, sp) # forcing functions
+    u_forcing = create_tidal_forcing(sp) # forcing functions
 
     model = HydrostaticFreeSurfaceModel(; grid, coriolis,
                                       buoyancy = BuoyancyTracer(),
                                       tracers = :b,
                                       momentum_advection = WENO(),
                                       tracer_advection = WENO(),
-                                      forcing = (; u = (forcings.u_forcing)) 
+                                      forcing = (; u = (u_forcing)) 
     )
     @info model
 
