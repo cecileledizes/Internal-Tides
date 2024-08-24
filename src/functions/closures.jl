@@ -1,4 +1,5 @@
 # closure functions
+# returns NamedTuple of closures
 
 using Oceananigans
 using Oceananigans.Units
