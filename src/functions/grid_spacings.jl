@@ -81,11 +81,11 @@ end
         if k == half
             0 
         elseif k < half
-            0 - sum(B[1:trunc(Int, half - (k))])
+            0 - sum(B_x[1:trunc(Int, half - (k))])
         elseif half < k <= sp.Nx
-            sum(B[1:trunc(Int, k-half)])
+            sum(B_x[1:trunc(Int, k-half)])
         else 
-            sum(B[1:trunc(Int, k-(half + 1))]) + B[end] # need this because k goes up to Nx + 1
+            sum(B_x[1:trunc(Int, k-(half + 1))]) + B_x[end] # need this because k goes up to Nx + 1
         end
     end
 
