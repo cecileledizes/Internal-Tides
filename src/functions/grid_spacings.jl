@@ -74,7 +74,7 @@ end
     xy_array = LinRange(0, half, half) # start, stop, num_elements
 
     # xy-spacing array
-    B_x = [xy_spacing(x) for xy in xy_array]
+    B_x = [xy_spacing(xy) for xy in xy_array]
 
     # Generating function 
     function xy_faces(k::Int)
