@@ -20,12 +20,12 @@ Using Oceananigans, creates 3D simulations of internal tides with modifiable par
 ## Details
 
 My file system setup: 
-julia   
-project 
-   analysis
-   jobscript
-   src
-scratch
+- julia   
+- project 
+  - analysis
+  - jobscript
+  - src
+- scratch
 
 If using a different file system setup, file paths and file names will probably be different, and should be replaced. 
 
