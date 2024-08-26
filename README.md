@@ -84,4 +84,4 @@ The "functions" subfolder in "src" contains functions which produce relevant or 
 The analysis folder contains code to produce visualizations of results, including videos of the velocity fields (u', v', w) at x-slices, y-slices, or z-slices, and plots of the energy flux. I've been using a JupyterNotebook for visualization, but they could probably also be run as scripts with some modifications. 
 
 ## Credits
-Adapted from Oceananigans "Internal Tide by a Seamount" example, modified with help, code, and technical support from Erin Atkinson. 
+Adapted from Oceananigans "Internal Tide by a Seamount" example. Thank you to Erin Atkinson for the help, code, and the entire **Implementation** section.  
