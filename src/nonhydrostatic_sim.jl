@@ -68,18 +68,10 @@ include("functions/topographies.jl")
 
     N² = ∂z(b)
 
-    # To calculate energy flux 
-    pbar = FunctionField{Nothing, Nothing, Center}((z, p)->0.5 * p.N^2 * z^2, grid; parameters=(; N=sqrt(sp.Nᵢ²)))
-    P = pHY - pbar
-    u′P = Field(u′ * P)
-    v′P = Field(v′ * P)
-    u′Pz = Field(Integral(u′P, dims = 3))
-    v′Pz = Field(Integral(v′P, dims = 3))
+    # For some reason, trying to calculate energy flux with the NonhydrostaticModel causes an invalid LLVM IR error...
     
     filename_1 = "[FILENAME].jld2"
-    filename_2 = "[AVERAGES_FILENAME].jld2"
     save_fields_interval = 30minutes
-    timeaverage_schedule = AveragedTimeInterval(T₂, window = T₂)
     
     # Output writers
     simulation.output_writers[:fields] = JLD2OutputWriter(model, (; u′, u, v′, v, w, P); #u, u′, U, v, v′, V, w, b, P, N²
@@ -87,13 +79,6 @@ include("functions/topographies.jl")
                      schedule = TimeInterval(save_fields_interval),
                      overwrite_existing = true,
                      with_halos = true)
-    
-    simulation.output_writers[:averages] = JLD2OutputWriter(model, (; u′Pz, v′Pz); #u, u′, U, v, v′, V, w, b, P, N²
-                     filename = "$foldername/$filename_2",
-                     schedule = TimeInterval(save_fields_interval),
-                     overwrite_existing = true,
-                     with_halos = true)
-
     @info simulation
 
     # Function returns the simulation
