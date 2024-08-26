@@ -27,7 +27,7 @@ My file system setup:
 
 If using a different setup, file paths and file names will probably be different, and should be replaced. 
 
-Procedure for getting a Julia notebook installed on Mist:
+Procedure for getting a Julia 1.10.4 Jupyter notebook installed on Mist (for analysis purposes):
 ```
 # In Niagara
 
