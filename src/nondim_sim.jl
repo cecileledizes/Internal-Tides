@@ -4,6 +4,7 @@ using JLD2
 using Printf
 using Oceananigans: Fields.FunctionField
 
+# Supplementary functions
 include("functions/nondim_parameters.jl")
 include("functions/closures.jl")
 include("functions/forcings.jl")
