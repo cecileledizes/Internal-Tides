@@ -2,7 +2,7 @@ ENV["JULIA_SCRATCH_TRACK_ACCESS"] = 0
 
 using Oceananigans
 
-include("create_nondim_simulation.jl")
+include("nondim_sim.jl")
 
 # (; stop_time, δ=0.3, E=0.5, β=0, B=(0.002/0.00014), H=3000, Nx=512, Ny=512, Nz=256, ω₂=0.00014, width=15558)
 # (; stop time, height ratio, relative steepness, frequency (f), frequency (N), domain height, x grid size, y grid size, z grid size, tidal frequency, width)
@@ -23,5 +23,5 @@ width = Meta.parse(ARGS[12])
 
 simulation_parameters = (; δ, E, β, B, H, Nx, Ny, Nz, ω₂, width)
 
-simulation = it_create_nondim_simulation(stop_time, foldername, simulation_parameters)
+simulation = create_nondim_simulation(stop_time, foldername, simulation_parameters)
 run!(simulation)
