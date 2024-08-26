@@ -27,7 +27,7 @@ My file system setup:
   - src
 - scratch
 
-If using a different file system setup, file paths and file names will probably be different, and should be replaced. 
+If using a different setup, file paths and file names will probably be different, and should be replaced. 
 
 In the "src" folder, the `NAME_sim.jl` files contain `it_create_simulation(stop_time, foldername, simulation_parameters)` functions which return the appropriate simulation. The `run_NAME_sim.jl` files convert the arguments listed in the jobscripts to the function arguments, and call the function. In order to run the simulations, run the corresponding `NAME.sh` jobscript in a terminal with the required arguments separated by spaces. If an argument is a non-natural number, it should be in quotation marks (e.g. "0.04" "-45" "4e6"). The jobscripts are written in shell script. 
 
