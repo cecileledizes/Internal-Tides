@@ -17,8 +17,7 @@ underlying_grid = RectilinearGrid(GPU(); size = (sp.Nx, sp.Ny, sp.Nz), # Change 
 ## Description
 Using Oceananigans, creates 3D simulations of internal tides with modifiable parameters. 
 
-## Details
-
+## Implementation
 My file system setup: 
 - project 
   - analysis
@@ -75,6 +74,7 @@ export JULIA_SCRATCH_TRACK_ACCESS=0
 julia simulation.jl
 ```
 
+## Details
 In the "src" folder, the `NAME_sim.jl` files contain `it_create_simulation(stop_time, foldername, simulation_parameters)` functions which return the appropriate simulation. The `run_NAME_sim.jl` files convert the arguments listed in the jobscripts to the function arguments, and call the function. In order to run the simulations, run the corresponding `NAME.sh` jobscript in a terminal with the required arguments separated by spaces. If an argument is a non-natural number, it should be in quotation marks (e.g. "0.04" "-45" "4e6"). The jobscripts are written in shell script. 
 
 There are 3 simulations. `base_sim.jl` is the main version, which uses the HydrostaticFreeSurfaceModel. `nonhydrostatic_sim.jl` uses the Nonhydrostatic model. Barring some necessary modifications due to differences between the models, the two have the same code; however, the two models do not produce the same results. Additionally, `nondim_sim.jl` is a HydrostaticFreeSurfaceModel simulation which has a different set of nondimensional parameters.
