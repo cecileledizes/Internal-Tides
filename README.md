@@ -20,7 +20,6 @@ Using Oceananigans, creates 3D simulations of internal tides with modifiable par
 ## Details
 
 My file system setup: 
-- julia   
 - project 
   - analysis
   - jobscript
