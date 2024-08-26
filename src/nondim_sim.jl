@@ -36,14 +36,10 @@ include("functions/grid_spacings.jl")
     
     # Tidal forcing
     T₂ = 2π / sp.ω₂ # sec
-    ϵ = 0.1 # excursion parameter
     coriolis = FPlane(f = sp.β * sp.ω₂)
     Nᵢ² = (sp.B * ω₂) ^ 2  # [s⁻²] initial buoyancy frequency / stratification
 
-    U_tidal = ϵ * sp.ω₂ * width
-    tidal_forcing_amplitude = U_tidal * (sp.ω₂^2 - coriolis.f^2) / sp.ω₂
-    @inline tidal_forcing(x, y, z, t, p) = p.tidal_forcing_amplitude * cos(p.ω₂ * t)
-    u_forcing = Forcing(tidal_forcing, parameters=(; tidal_forcing_amplitude, sp.ω₂))
+    u_forcing = create_tidal_forcing(; sp..., f = coriolis.f)
     
     # Model
     model = HydrostaticFreeSurfaceModel(; grid, coriolis,
