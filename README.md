@@ -28,6 +28,37 @@ My file system setup:
 
 If using a different setup, file paths and file names will probably be different, and should be replaced. 
 
+Procedure for getting Julia v1.10.4, Oceananigans, and CUDA installed: 
+```
+# in Mist login node
+
+$ module load julia/1.10.4
+$ export JULIA_DEPOT_PATH=$SCRATCH/.julia-mist
+$ julia
+julia> ]add CUDA@5.3
+julia> ]pin CUDA
+julia> ]add Oceananigans
+julia> using Oceananigans
+
+# in a debugjob, check it works:
+
+$ module load julia/1.10.4
+$ export JULIA_DEPOT_PATH=$SCRATCH/.julia-mist
+$ export JULIA_SCRATCH_TRACK_ACCESS=0
+$ julia
+julia> using Oceananigans
+```
+
+All scripts need the following:
+
+```
+module load julia/1.10.4
+export JULIA_DEPOT_PATH=$SCRATCH/.julia-mist
+export JULIA_SCRATCH_TRACK_ACCESS=0
+
+julia simulation.jl
+```
+
 In the "src" folder, the `NAME_sim.jl` files contain `it_create_simulation(stop_time, foldername, simulation_parameters)` functions which return the appropriate simulation. The `run_NAME_sim.jl` files convert the arguments listed in the jobscripts to the function arguments, and call the function. In order to run the simulations, run the corresponding `NAME.sh` jobscript in a terminal with the required arguments separated by spaces. If an argument is a non-natural number, it should be in quotation marks (e.g. "0.04" "-45" "4e6"). The jobscripts are written in shell script. 
 
 There are 3 simulations. `base_sim.jl` is the main version, which uses the HydrostaticFreeSurfaceModel. `nonhydrostatic_sim.jl` uses the Nonhydrostatic model. Barring some necessary modifications due to differences between the models, the two have the same code; however, the two models do not produce the same results. Additionally, `nondim_sim.jl` is a HydrostaticFreeSurfaceModel simulation which has a different set of nondimensional parameters.
