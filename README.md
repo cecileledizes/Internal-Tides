@@ -28,6 +28,9 @@ The analysis folder contains code to produce visualizations of results, includin
 
 In general, file paths and file names will probably be different for a different file system setup. 
 
+## Credits
+Adapted from Oceananigans "Internal Tide by a Seamount" example, modified with help and code from Erin Atkinson. 
+
 ## Miscellaneous observations
 For some reason, using triple quotation marks to comment after the "create_simulation" functions—
 ```
@@ -39,4 +42,4 @@ end
    different simulation stuff
 end"""
 ```
-—causes "foldername" to throw an UndefVar error. I have no idea why. 
+—causes "foldername" to throw an UndefVar error.
