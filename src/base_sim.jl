@@ -15,12 +15,13 @@ include("functions/topographies.jl")
     
     sp = create_simulation_parameters(simulation_parameters)
     z_spacing = vertical_spacings_256(sp)
+    xy_spacing = horizontal_spacing(sp)
     bottom = create_gaussian_topography(sp) 
     
     # Grid
     underlying_grid = RectilinearGrid(GPU(); size = (sp.Nx, sp.Ny, sp.Nz),
-                                  x = ((-1000)kilometers, (1000)kilometers),
-                                  y = ((-1000)kilometers, (1000)kilometers),
+                                  x = xy_spacing,
+                                  y = xy_spacing,
                                   z = z_spacing,
                                   halo = (4, 4, 4),
                                   topology = (Periodic, Periodic, Bounded)
