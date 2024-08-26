@@ -19,7 +19,7 @@ include("functions/topographies.jl")
     
     # Grid
     underlying_grid = RectilinearGrid(GPU(); size = (sp.Nx, sp.Ny, sp.Nz),
-                                      x = ((-1000)kilometers, (1000)kilometers),
+                                      x = ((-1000)kilometers, (1000)kilometers), # the nonhydrostatic model currently does not support more than one dimension with variable/stretched grid spacing
                                       y = ((-1000)kilometers, (1000)kilometers),
                                       z = z_spacing,
                                       halo = (4, 4, 4),
