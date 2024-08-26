@@ -28,7 +28,7 @@ My file system setup:
 
 If using a different setup, file paths and file names will probably be different, and should be replaced. 
 
-Procedure for getting Julia v1.10.4, Oceananigans, and CUDA installed: 
+Procedure for getting Julia v1.10.4, Oceananigans, and CUDA installed on Mist: 
 ```
 # in Mist login node
 
