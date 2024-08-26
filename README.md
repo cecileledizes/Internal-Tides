@@ -28,7 +28,23 @@ My file system setup:
 
 If using a different setup, file paths and file names will probably be different, and should be replaced. 
 
-Procedure for getting Julia v1.10.4, Oceananigans, and CUDA installed on Mist: 
+Procedure for getting Julia v1.10.4 installed:
+```
+$ module load NiaEnv/2022a julia/1.10.4 python
+$ python -m venv --system-site-packages /dev/shm/$USER/tempenv
+$ source /dev/shm/$USER/tempenv/bin/activate
+$ pip install jupyter
+$ julia
+julia> using Pkg
+julia> Pkg.add("IJulia")
+julia> exit()
+$ deactivate
+$ rm -rf /dev/shm/$USER/tempenv
+```
+Here, commands starting with "$" should be entered at the bash prompt and those starting with "julia>" at the julia prompt.
+Note that the temporary virtual python environment is just needed here for getting the "jupyter" command, which the "Pkg.add(...)" julia command calls behind the scenes. Since this environment is temporary, we can use ramdisk to speed up the python installation process.
+
+Procedure for getting Oceananigans and CUDA installed: 
 ```
 # in Mist login node
 
