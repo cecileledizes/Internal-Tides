@@ -1,5 +1,8 @@
 # 3D Simulation of Internal Tides using Oceananigans
 
+## Description
+Using Oceananigans, creates 3D simulations of internal tides with modifiable parameters. 
+
 ## Technical details
 Tested with Julia v1.10.4, Oceananigans v0.91.2, JLD2 v0.4.48, CUDA v5.3.5, and CairoMakie v0.12.2 on the Mist GPU cluster. This code is for GPU, but can be adapted to CPU by changing `GPU()` to `CPU()` in the grid of the simulation, in which case the jobscripts are not necessary. 
 
@@ -13,10 +16,6 @@ underlying_grid = RectilinearGrid(GPU(); size = (sp.Nx, sp.Ny, sp.Nz), # Change 
                                   topology = (Periodic, Periodic, Bounded)
 )
 ```
-
-## Description
-Using Oceananigans, creates 3D simulations of internal tides with modifiable parameters. 
-
 ## Implementation
 My file system setup: 
 - project 
