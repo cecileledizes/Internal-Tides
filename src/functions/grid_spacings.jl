@@ -58,7 +58,8 @@ end
 end
 
 @inline function horizontal_spacing(sp::NamedTuple)
-    "Horizontal spacing, creates smaller spacing closer to the seamount. I'm not totally sure if this works."
+    "Horizontal spacing, creates smaller spacing closer to the seamount. 
+    Should create extent of approximately -1000km to 1000km."
 
     xy_a = 100 # can change these parameters to change the spacing function
     xy_b = 3900 
