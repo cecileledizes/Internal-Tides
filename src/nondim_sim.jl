@@ -8,7 +8,8 @@ using Oceananigans: Fields.FunctionField
 include("functions/nondim_parameters.jl")
 include("functions/closures.jl")
 include("functions/forcings.jl")
-include("functions/grid_spacings.jl")
+include("functions/grid_spacings.jl") # haven't tried using these with the nondimensional simulation yet
+include("functions/topographies.jl") # relative steepness would change if the topography changes
 
 # This has a different set of parameters than base_sim and nonhydrostatic_sim
 @inline function create_nondim_simulation(stop_time::Number, output_folder, simulation_parameters::NamedTuple)
