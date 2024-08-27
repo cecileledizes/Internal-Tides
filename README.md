@@ -85,5 +85,8 @@ The "functions" subfolder in "src" contains functions which produce relevant or 
 
 The analysis folder contains code to produce visualizations of results, including videos of the velocity fields (u', v', w) at x-slices, y-slices, or z-slices, and plots of the energy flux. I've been using a JupyterNotebook for visualization, but they could probably also be run as scripts with some modifications. 
 
+## Results 
+I've included some of my results for comparison/verification purposes in the Results.zip file. It includes videos of the y-slices and z-slices of the velocity fields of `base_sim.jl`, `nonhydrostatic_sim.jl`, and `nondim_sim.jl`. For `nondim_sim.jl`, I also included a case where beta = 0.5, and plotted the energy flux with extremely wrong axes labels (I couldn't figure out how to get CairoMakie to make correct labelling). 
+
 ## Credits
 Adapted from Oceananigans "Internal Tide by a Seamount" example. Thank you to Erin Atkinson for the help, code, and the entire **Implementation** section.  
