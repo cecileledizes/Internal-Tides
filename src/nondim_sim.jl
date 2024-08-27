@@ -25,9 +25,9 @@ include("functions/grid_spacings.jl")
     )
     
     h₀ = (sp.δ * sp.H)
-    width = sp.width
     # width = (h₀ * exp(-1/2) / sp.E) * sqrt(((sp.B^2) - 1) / (1 - (sp.β^2))) --width calculated from the slope of the Gaussian
     # @info width --double checking calculated width
+    width = sp.width # can also just specify width along with other simulation parameters
     @inline hill(x, y) = (h₀)meters * exp((-x^2 - y^2)/ (2(((width)meters)^2)))
     @inline bottom(x, y) = - (sp.H)meters + hill(x, y)
     
@@ -39,7 +39,8 @@ include("functions/grid_spacings.jl")
     coriolis = FPlane(f = sp.β * sp.ω₂)
     Nᵢ² = (sp.B * ω₂) ^ 2  # [s⁻²] initial buoyancy frequency / stratification
 
-    u_forcing = create_tidal_forcing(; sp..., f = coriolis.f)
+    fp = (; sp..., f = coriolis.f)
+    u_forcing = create_tidal_forcing(fp)
     
     # Model
     model = HydrostaticFreeSurfaceModel(; grid, coriolis,
