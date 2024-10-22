@@ -19,7 +19,7 @@ Nz = Meta.parse(ARGS[9])
 H = Meta.parse(ARGS[10])
 ω = Meta.parse(ARGS[11])
 Nᵢ² = Meta.parse(ARGS[12])
-simulation_parameters = (; δ, ϵ, α, β, Nx, Ny, Nz, H, width, ω, Nᵢ²)
+simulation_parameters = (; δ, ϵ, α, β, Nx, Ny, Nz, H, ω, Nᵢ²)
 
 simulation = it_create_simulation(stop_time, foldername, simulation_parameters)
 run!(simulation)

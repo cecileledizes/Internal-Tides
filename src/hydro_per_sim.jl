@@ -20,36 +20,38 @@ include("functions/topographies.jl")
     bottom = create_gaussian_topography(sp, hmax, width) 
     
     # Grid
-    Lmode1 = 2*μ*sp.H                      # Horizontal wavelength of mode-1
+    Lmode1 = 2*μ*sp.H                   # Horizontal wavelength of mode-1
     xextend = max(3*Lmode1, 6*width)    # Horizontal extend of the simulation box
     underlying_grid = RectilinearGrid(GPU(); size = (sp.Nx, sp.Ny, sp.Nz),
-                                  x = ((-xextend)kilometers,(xextend)kilometers), #xy_spacing,
-                                  y = ((-xextend)kilometers,(xextend)kilometers), 
+                                  x = ((-xextend)meters,(xextend)meters), #xy_spacing,
+                                  y = ((-xextend)meters,(xextend)meters), 
                                   z = ((-sp.H)meters, 0meters), #z_spacing,
                                   halo = (4, 4, 4),
-                                  topology = (Bounded, Bounded, Bounded)
+                                  topology = (Periodic, Periodic, Bounded)
     )
     grid = ImmersedBoundaryGrid(underlying_grid, PartialCellBottom(bottom))
     @info grid
     
-    # MODEL
-    closures = create_closures(1e-3, 1e-3, grid, sp) # closure functions
+    # Model
     coriolis = FPlane(f = sp.β*sp.ω)
-
+    closures = create_closures(1e-3, 1e-3, grid, sp) # closure functions
+    
     U0 = sp.α * sp.ω * width
     @inline tidal_uforcing(x, y, z, t, p) = p.U0 * p.ω * cos(p.ω * t)
+    @inline tidal_vforcing(x, y, z, t, p) = - p.U0 * p.f * sin(p.ω * t)
+    # Needed to have a unidirectional forcing ?
     u_forcing = Forcing(tidal_uforcing, parameters=(; U0=U0, ω=sp.ω))
-    #@inline tidal_vforcing(x, y, z, t, p) = - p.U0 * p.f * sin(p.ω * t)
-    #v_forcing = Forcing(tidal_vforcing, parameters=(; U0=U0, ω=sp.ω, f=sp.ω*sp.β))
-    sponge = create_sponge_layers(sp.Nᵢ²,grid.Lx,grid.Ly)
+    v_forcing = Forcing(tidal_vforcing, parameters=(; U0=U0, ω=sp.ω, f=sp.ω*sp.β))
 
     model = HydrostaticFreeSurfaceModel(; grid, coriolis,
                                       buoyancy = BuoyancyTracer(),
                                       tracers = :b,
-                                      closure = closures.biharmonic,                   
+                                      closure = closures.biharmonic,
                                       momentum_advection = WENO(),
                                       tracer_advection = WENO(),
-                                      forcing=(; u=(u_forcing, sponge.uvw), v=sponge.uvw, η=sponge.uvw, b=sponge.b))
+                                      forcing=(; u=u_forcing, v=v_forcing)
+                                      #free_surface = SplitExplicitFreeSurface(; gravitational_acceleration = 1e-3, substeps=1)
+    )
     @info model
 
     @inline uᵢ(x, y, z) = 0
@@ -57,7 +59,7 @@ include("functions/topographies.jl")
 
     set!(model, u=uᵢ, b=bᵢ)
 
-    # SIMULATION SET-UP
+    # Simulation setup
     Δx = 2*xextend/sp.Nx
     Δt = (2*60/3906.25*Δx)seconds # 2 minutes for Δx,y=3906.25, adjust linearly with Δx,y
     simulation = Simulation(model; Δt, stop_time=(stop_time)days)
@@ -65,7 +67,6 @@ include("functions/topographies.jl")
     wizard = TimeStepWizard(cfl=0.2, diffusive_cfl = 0.2, max_Δt = Δt, min_Δt = (Δt/12)seconds) # To ensure simulation stability
     simulation.callbacks[:wizard] = Callback(wizard, IterationInterval(20))
     
-    # OUTPUTS
     # Simulation output
     b = model.tracers.b
     u, v, w = model.velocities
@@ -74,14 +75,9 @@ include("functions/topographies.jl")
 
     U = Field(Average(u))
     V = Field(Average(v))
-    u′ = u-U
-    v′ = v-V
-#=
-    U = Field(Average(u, dims=3))
-    V = Field(Average(v, dims=3))
-    @inline pert(i, j, k, grid, f, F) = @inbounds f[i, j, k] - F[i, j, 1]
-    u′ = Field(KernelFunctionOperation{Face, Center, Center}(pert, grid, u, U))
-    v′ = Field(KernelFunctionOperation{Center, Face, Center}(pert, grid, v, V))
+    u′ = u - U
+    v′ = v - V
+
     N² = ∂z(b)
 
     # To calculate energy flux 
@@ -91,17 +87,15 @@ include("functions/topographies.jl")
     v′P = Field(v′ * P)
     u′Pz = Field(Integral(u′P, dims = 3))
     v′Pz = Field(Integral(v′P, dims = 3))
-    =#
     
     # Output writers
     save_fields_interval = 6hours
-    simulation.output_writers[:fields] = JLD2OutputWriter(model, (; u′, u, v′, v, w, pHY, b); #(; u′, u, v′, v, w, P, η);
+    simulation.output_writers[:fields] = JLD2OutputWriter(model, (; u′, u, v′, v, w, P); #u, u′, U, v, v′, V, w, b, P, N², η
                      filename = "$foldername/"*"3Dfields_hydro.jld2",
                      schedule = TimeInterval(save_fields_interval),
                      overwrite_existing = true,
                      with_halos = true)
     
-    #=
     save_fields_interval = 30minutes
     simulation.output_writers[:XYslice] = JLD2OutputWriter(model, (; u′, u, v′, v, w, P, b, N²);
                      filename = "$foldername/"*"XYslice_hydro.jld2",
@@ -116,15 +110,15 @@ include("functions/topographies.jl")
                      schedule = TimeInterval(save_fields_interval),
                      overwrite_existing = true,
                      with_halos = true)
-    
+
     T = (2π / sp.ω)seconds
-    simulation.output_writers[:averages] = JLD2OutputWriter(model, (; u′Pz, v′P);
+    simulation.output_writers[:averages] = JLD2OutputWriter(model, (; u′Pz, v′Pz, η);
                      filename = "$foldername/"*"average_hydro.jld2",
                      #schedule = AveragedTimeInterval(T, window=T),
-                     schedule = TimeInterval(T/2),
+                     schedule = TimeInterval(T/10),
                      overwrite_existing = true,
                      with_halos = true)
-    =#
+
     @info simulation
 
     # Function returns the simulation
